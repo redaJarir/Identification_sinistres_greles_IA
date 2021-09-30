@@ -1,5 +1,9 @@
 library(shiny)
 library(fresh)
+library(tensorflow)
+library(keras)
+library(reticulate)
+source_python("data_preparation_function.py")
 
 ui <- navbarPage("Identification des sinistres causés par la grêle",
                  header=use_theme(create_theme(
@@ -17,6 +21,12 @@ ui <- navbarPage("Identification des sinistres causés par la grêle",
 
 server <- function(input, output, session) {
   
+  dataset<-reactive({ 
+    inFile <- input$file
+    dat<-read_xlsx(inFile$datapath, sheet =  1)
+    return(dat)
+  })
+  observeEvent({input$classifier, })
   
 }
 
