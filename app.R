@@ -39,7 +39,7 @@ ui <- navbarPage(strong("Identification des sinistres causés par la grêle"),
                                 br(),
                                 downloadButton("Telecharger", "Télécharger les résultats", style="color: #fff; background-color: green; border-color: black")
                      ),
-                   mainPanel(tableOutput("mytable"))
+                   mainPanel(tableOutput("Table_sinistres_a_verifier"))
                  )
                 )
                  
@@ -58,18 +58,17 @@ server <- function(input, output, session) {
     return(dataset)
     })
   
-    pred_verif <- eventReactive(input$classifier,{
+    classe_sinistre <- eventReactive(input$classifier,{
     data_class<-classifier(data())
     return(data_class)
     })
   
-    output$mytable <- renderTable({
-      my_table <- pred_verif()
-      sinistres_verif<-my_table[my_table[,'Class']=='sinistre à vérifier',]
-      if(is.null(sinistres_verif)){
+    output$Table_sinistres_a_verifier<- renderTable({
+      sinistres_a_verifier<-classe_sinistre()[classe_sinistre()[,'Class']=='sinistre à vérifier',]
+      if(is.null(sinistres_a_verifier)){
         return(NULL)
       }else{
-        sinistres_verif
+        sinistres_a_verifier
     }})
     output$Telecharger<-downloadHandler(filename='sinistres classifiés.csv',
     content=function(file){read.csv(pred_verif(), file, col.names=TRUE, append=FALSE)})
