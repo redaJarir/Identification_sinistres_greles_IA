@@ -7,7 +7,7 @@ REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;:!?]')
 #Importer la liste des stopwords en français 
 STOPWORDS = nltk.corpus.stopwords.words('french')
 #Liste des mots à ajouter dans la liste des stopwords en français
-words_to_add=['fiche', 'db', 'dpt']
+words_to_add=['fiche', 'db', 'dpt', 'neant', 'nan']
 for word in words_to_add:
   STOPWORDS.append(word)
 #mots à enlever de la liste des stopwords en français
