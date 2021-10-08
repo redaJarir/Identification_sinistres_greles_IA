@@ -25,8 +25,8 @@ ui <- dashboardPage(skin='green',
                               class = "dropdown")
   ),
   dashboardSidebar(sidebarMenu(
-    menuItem(strong("Identification générale"), tabName = "generale", icon = icon("home")),
-    menuItem(strong("Identification périodique"), tabName = "periode", icon = icon("dashboard"))
+    menuItem(strong("Identification générale"), tabName = "general", icon = icon("home")),
+    menuItem(strong("Identification périodique"), tabName = "period", icon = icon("dashboard"))
   )),
   dashboardBody(
     tags$head(tags$style(HTML('
@@ -40,66 +40,59 @@ ui <- dashboardPage(skin='green',
       tags$style(HTML(".main-sidebar {background-color:  #1E8449 !important;}"))
     ),
     tabItems(
-      tabItem(tabName = 'generale',
+      tabItem(tabName = 'general',
               br(),
-              
               tags$head(
                 tags$style(HTML("
                     .shiny-output-error-validation {
                     color: red;
-                      }
-                  "))
-              ),
-              
-              
+                      }"))),
               tags$style(".shiny-file-input-progress {display: none}"),
               tags$style(HTML("
     .tabbable > .nav > li > a {background-color: #7DCEA0;  color:black; width: 400PX;}
   ")),
-              
-              
-              column(fileInput("general_file","Sélectionner le fichier Excel des données"),br(),
+  column(fileInput("general_file","Sélectionner le fichier Excel des données"),br(),
                               
-                              actionButton("classifier_general", strong("Classifier les sinistres"), style="color: #fff; background-color: green; border-color: black"),
-                              br(),
-                              br(),
-                              actionButton("classifier_grele_general",strong("Classifier grêle"), style="color: #fff; background-color: green; border-color: black"),
-                              br(),
-                              br(),
-                              downloadButton("Telecharger_general", strong("Télécharger les résultats"), style="color: #fff; background-color: green; border-color: black"),width = 4),
+                  actionButton("classifier_general", 
+                    strong("Classifier les sinistres"),
+                    style="color: #fff; background-color: green; border-color: black"),
+                  br(),
+                  br(),
+                  actionButton("classifier_grele_general",
+                    strong("Classifier grêle"),
+                    style="color: #fff; background-color: green; border-color: black"),
+                  br(),
+                  br(),
+                  downloadButton("Telecharger_general",
+                    strong("Télécharger les résultats"),
+                    style="color: #fff; background-color: green; border-color: black"),
+                    width = 4),
                        
-                       column(dataTableOutput("Table_sinistres_a_verifier_general"), width=8)),
+  column(dataTableOutput("Table_sinistres_a_verifier_general"), width=8)),
               
-      tabItem(tabName = 'periode',
-              
+      tabItem(tabName = 'period',
               br(),
-                 
-                 tags$head(
-                   tags$style(HTML("
-                    .shiny-output-error-validation {
-                    color: red;
-                      }
-                  "))
+              tags$head(tags$style(HTML(".shiny-output-error-validation {color: red;}"))
                  ),
+              tags$style(".shiny-file-input-progress {display: none}"),
+              tags$style(HTML(".tabbable > .nav > li > a {background-color: #7DCEA0;  color:black; width: 400PX;}")
+                         ),
+              column(fileInput("file_n","Sélectionner le fichier Excel des données de l'année n"),
+                     br(),
+                    fileInput("file_n_1","Sélectionner le fichier Excel des données de l'année n-1"),
+                    br(),
+                    actionButton("classifier_period", strong("Classifier les sinistres"),
+                        style="color: #fff; background-color: green; border-color: black"),
+                    br(),
+                    br(),
+                    actionButton("classifier_grele_period",strong("Classifier grêle"),
+                        style="color: #fff; background-color: green; border-color: black"),
+                    br(),
+                    br(),
+                    downloadButton("Telecharger_period", strong("Télécharger les résultats"),
+                        style="color: #fff; background-color: green; border-color: black"),width = 4),
                  
-          
-                 tags$style(".shiny-file-input-progress {display: none}"),
-                 tags$style(HTML("
-    .tabbable > .nav > li > a {background-color: #7DCEA0;  color:black; width: 400PX;}
-  ")),
-                 
-                 
-                          column(fileInput("file_n","Sélectionner le fichier Excel des données de l'année n"),br(),
-                                 fileInput("file_n_1","Sélectionner le fichier Excel des données de l'année n-1"),br(),
-                              actionButton("classifier_period", strong("Classifier les sinistres"), style="color: #fff; background-color: green; border-color: black"),
-                              br(),
-                              br(),
-                 actionButton("classifier_grele_period",strong("Classifier grêle"), style="color: #fff; background-color: green; border-color: black"),
-                 br(),
-                 br(),
-                downloadButton("Telecharger_period", strong("Télécharger les résultats"), style="color: #fff; background-color: green; border-color: black"),width = 4),
-                 
-                 column(dataTableOutput("Table_sinistres_a_verifier_period"), width=8)))))
+              column(dataTableOutput("Table_sinistres_a_verifier_period"), width=8)))))
                 
                    
                  
