@@ -1,8 +1,9 @@
+#libraries
 import pickle5 as pickle
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-
+#fonction pour préparer les données au traitement par le modèle lstm
 max_length = 10
 def preparation(df):
   df['LI_DSC_ADS'] = df['LI_DSC_ADS'].astype(str)
