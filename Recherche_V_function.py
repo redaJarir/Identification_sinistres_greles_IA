@@ -1,4 +1,4 @@
-
+#fonction de Recherche V
 def Recherche_V(df):
   df['LI_DSC_ADS'] = df['LI_DSC_ADS'].astype(str)
   df['LI_DSC_SIGMA'] = df['LI_DSC_SIGMA'].astype(str)
