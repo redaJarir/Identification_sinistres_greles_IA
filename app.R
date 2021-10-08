@@ -25,8 +25,8 @@ ui <- dashboardPage(skin='green',
                               class = "dropdown")
   ),
   dashboardSidebar(sidebarMenu(
-    menuItem("Identification générale", tabName = "generale", icon = icon("home")),
-    menuItem("Identification périodique", tabName = "periode", icon = icon("dashboard"))
+    menuItem(strong("Identification générale"), tabName = "generale", icon = icon("home")),
+    menuItem(strong("Identification périodique"), tabName = "periode", icon = icon("dashboard"))
   )),
   dashboardBody(
     tags$head(tags$style(HTML('
