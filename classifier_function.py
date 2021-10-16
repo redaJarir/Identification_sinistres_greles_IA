@@ -11,3 +11,6 @@ def classifier(df):
       df.loc[i, 'Class']='sinistre à vérifier'
   return(df.loc[:, (df.columns != 'Recherche_V_class')&(df.columns != 'lstm_class')&(df.columns != 'Comment_RV')&(df.columns != 'Comment_lstm')])
 
+import pandas as pd
+df=pd.read_csv('BD_n.csv', sep=';', encoding = "ISO-8859-1")
+classifier(df)
