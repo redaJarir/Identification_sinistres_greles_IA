@@ -22,48 +22,49 @@ ui <- dashboardPage(skin='green',
                                 img(src = 'groupama.jpg',
                                     title = "Groupama", height = "30px"),
                                 style = "padding-top:10px; padding-bottom:10px;"),
-                              class = "dropdown")
-  ),
+                              class = "dropdown")),
   dashboardSidebar(),
   dashboardBody(
     tags$head(tags$style(HTML('
       .main-header .logo {
         font-family: "Georgia", Times, "Times New Roman", serif;
         font-weight: bold;
-        font-size: 20px;
-      }
-    '))),
+        font-size: 20px;}'))),
     tags$head(
-      tags$style(HTML(".main-sidebar {background-color:  #1E8449 !important;}"))
-    ),
-              br(),
-              tags$head(
-                tags$style(HTML("
-                    .shiny-output-error-validation {
-                    color: red;
-                      }"))),
-              tags$style(".shiny-file-input-progress {display: none}"),
-              tags$style(HTML("
-    .tabbable > .nav > li > a {background-color: #7DCEA0;  color:black; width: 400PX;}
-  ")),
-  column(fileInput("my_file","Sélectionner le fichier Excel des données"),br(),
-                              
-                  actionButton("classifier",
-                    strong("Classifier les sinistres"),
-                    style="color: #fff; background-color: green; border-color: black; width:200px"),
-                  br(),
-                  br(),
-                  actionButton("classifier_grele",
-                    strong("Classifier grêle"),
-                    style="color: #fff; background-color: green; border-color: black; width:200px"),
-                  br(),
-                  br(),
-                  downloadButton("Telecharger",
-                    strong("Télécharger les résultats"),
-                    style="color: #fff; background-color: green; border-color: black; width:200px"),
+      tags$style(HTML("
+        .main-sidebar {background-color:  #1E8449 !important;}"))),
+    br(),
+    tags$head(tags$style(HTML("
+        .shiny-output-error-validation {
+          color: red;
+          }"))),
+    tags$style(".shiny-file-input-progress {display: none}"),
+    tags$style(HTML("
+    .tabbable > .nav > li > a {background-color: #7DCEA0;
+    color:black; width: 400PX;}
+      ")),
+    column(fileInput("my_file",
+            "Sélectionner le fichier Excel des données"),
+          br(),
+          actionButton("classifier",
+            strong("Classifier les sinistres"),
+            style="color: #fff; background-color: green; 
+            border-color: black; width:200px"),
+          br(),
+          br(),
+          actionButton("classifier_grele",
+            strong("Classifier grêle"),
+            style="color: #fff; background-color: green; 
+            border-color: black; width:200px"),
+          br(),
+          br(),
+          downloadButton("Telecharger",
+            strong("Télécharger les résultats"),
+            style="color: #fff; background-color: green; 
+            border-color: black; width:200px"),
                     width = 4),
                        
-  column(dataTableOutput("Table_sinistres_a_verifier"), width=8)
+    column(dataTableOutput("Table_sinistres_a_verifier"), width=8)
               
       
               ))
@@ -74,13 +75,14 @@ ui <- dashboardPage(skin='green',
 server <- function(input, output, session) {
   
     my_file<-reactive(input$my_file)
-  
-    
+
     my_data<- reactive({
       req(my_file())
       ext <- tools::file_ext(my_file())
-      validate(need(ext == "xlsx", "Erreur : Télécharger un fichier .xlsx s'il vous plaît"))
-      file.rename(my_file()$datapath,paste(my_file()$datapath, ".xlsx", sep=""))
+      validate(need(ext == "xlsx", 
+        "Erreur : Télécharger un fichier .xlsx s'il vous plaît"))
+      file.rename(my_file()$datapath,
+        paste(my_file()$datapath, ".xlsx", sep=""))
       my_dataset<-read.xlsx(paste(my_file()$datapath, ".xlsx", sep=""), 1)
       return(my_dataset)
     })
@@ -112,17 +114,16 @@ server <- function(input, output, session) {
     
     
     output$Telecharger<-downloadHandler(filename=function(){'classes_sinistres.xlsx'},
-                                               content=function(file){
-                                                 if(length(input$Table_sinistres_a_verifier_rows_selected) > 0){
-                                                   sinistres_greles=claims_to_check_hail()}
-                                                 else{
-                                                   sinistres_greles<-data.frame()
-                                                 }
-                                                 table_classes_sinistres<-table_finale(classes_claims(),claims_to_check(),sinistres_greles)
-                                                 write.xlsx(table_classes_sinistres, file, sheetName = "Sinistres classifiés")
-                                                 
-                                               })
-    
-  }
+                          content=function(file){
+                          if(length(input$Table_sinistres_a_verifier_rows_selected) > 0){
+                                sinistres_greles=claims_to_check_hail()
+                                }
+                          else{
+                                sinistres_greles<-data.frame()
+                              }
+                          table_classes_sinistres<-table_finale(classes_claims(),claims_to_check(),sinistres_greles)
+                          write.xlsx(table_classes_sinistres, file, sheetName = "Sinistres classifiés")
+                          })
+    }
 
 shinyApp(ui, server)
