@@ -49,19 +49,19 @@ ui <- dashboardPage(skin='green',
           actionButton("classifier",
             strong("Classifier les sinistres"),
             style="color: #fff; background-color: green; 
-            border-color: black; width:200px"),
+            border-color: black;border-width: 2px; width:200px"),
           br(),
           br(),
           actionButton("classifier_grele",
             strong("Classifier grêle"),
             style="color: #fff; background-color: green; 
-            border-color: black; width:200px"),
+            border-color: black;border-width: 2px; width:200px"),
           br(),
           br(),
           downloadButton("Telecharger",
             strong("Télécharger les résultats"),
             style="color: #fff; background-color: green; 
-            border-color: black; width:200px"),
+            border-color: black;border-width: 2px; width:200px"),
                     width = 4),
                        
     column(dataTableOutput("Table_sinistres_a_verifier"), width=8)
