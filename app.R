@@ -1,12 +1,10 @@
 library(shiny)
-library(reactable)
 library(reticulate)
+library(reactable)
 library(fresh)
-library(xlsx)
-library(tidyverse)
 library(shinydashboard)
 library(DT)
-library(dplyr)
+library(xlsx)
 source_python("clean_function.py")
 source_python("stem_function.py")
 source_python("data_preparation_for_lstm_function.py")
@@ -15,6 +13,7 @@ source_python("Recherche_V_function.py")
 source_python("initial_classification_function.py")
 source_python("final_classification_function.py")
 source_python("classes_new_claims_function.py")
+source_python("replace_weird_words.py")
 ui <- dashboardPage(skin='green',
   dashboardHeader(
     title = "Identification des sinistres grêles",
@@ -44,7 +43,7 @@ ui <- dashboardPage(skin='green',
     color:black; width: 400PX;}
       ")),
     column(fileInput("my_file",
-            "Sélectionner le fichier Excel des données"),
+            "Importer un fichier Excel des données"),
           br(),
           actionButton("classifier",
             strong("Classifier les sinistres"),
@@ -76,19 +75,12 @@ server <- function(input, output, session) {
   
     my_file<-reactive(input$my_file)
 
-    my_data<- reactive({
+    classes_claims<- eventReactive(input$classifier,{
       req(my_file())
-      ext <- tools::file_ext(my_file())
+      ext <- tools::file_ext(my_file()$datapath)
       validate(need(ext == "xlsx", 
         "Erreur : Télécharger un fichier .xlsx s'il vous plaît"))
-      file.rename(my_file()$datapath,
-        paste(my_file()$datapath, ".xlsx", sep=""))
-      my_dataset<-read.xlsx(paste(my_file()$datapath, ".xlsx", sep=""), 1)
-      return(my_dataset)
-    })
-    
-    classes_claims<- eventReactive(input$classifier,{
-      data_class<-new_claims_class(my_data())
+      data_class<-new_claims_class(my_file()$datapath)
       return(data_class)
     })
     claims_to_check<-reactive({
