@@ -8,7 +8,9 @@ max_length = 10
 def preparation(df):
   df['LI_DSC_ADS'] = df['LI_DSC_ADS'].astype(str)
   df['LI_DSC_SIGMA'] = df['LI_DSC_SIGMA'].astype(str)
-  df['Comment_lstm'] = df.LI_DSC_SIGMA.str.cat(' '+df.LI_DSC_ADS)
+  df['LI_DSC_ADS_2']=df['LI_DSC_ADS'].apply(replace_weird_words)
+  df['LI_DSC_SIGMA_2']=df['LI_DSC_SIGMA'].apply(replace_weird_words)
+  df['Comment_lstm'] = df.LI_DSC_SIGMA_2.str.cat(' '+df.LI_DSC_ADS_2)
   df['Comment_lstm'] = df['Comment_lstm'].apply(clean_comment)
   df['Comment_lstm'] = df['Comment_lstm'].str.replace('\d+', '')
   for i in range (len(df)):
@@ -18,5 +20,3 @@ def preparation(df):
     X = tokenizer.texts_to_sequences(df["Comment_lstm"].to_numpy())
     X = pad_sequences(X, maxlen=max_length,truncating="post", padding="post")
   return(X)
-
-
