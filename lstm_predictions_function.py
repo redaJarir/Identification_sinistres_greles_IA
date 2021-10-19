@@ -2,7 +2,6 @@
 import keras
 import os
 import numpy as np
-import pandas as pd
 #fonction de prédiction avec le modèle lstm
 def predict_lstm(df):
   my_model = keras.models.load_model('My_model.h5')
