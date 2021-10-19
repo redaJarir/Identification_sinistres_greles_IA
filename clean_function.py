@@ -14,7 +14,6 @@ for word in words_to_add:
 STOPWORDS.remove('pas')
 #fonction pour faire le cleaning
 def clean_comment(comment):
-  comment = comment.lower() # lowercase text
   comment = REPLACE_BY_SPACE_RE.sub(' ', comment) # replace REPLACE_BY_SPACE_RE symbols by space in text. substitute the matched string in REPLACE_BY_SPACE_RE with space. 
   comment = ' '.join(word for word in comment.split() if word not in STOPWORDS) # remove stopwors from text
   return comment
