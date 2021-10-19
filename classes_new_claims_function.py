@@ -1,7 +1,9 @@
 import pandas as pd
 import pickle5 as pickle
 import os
-def new_claims_class(df):
+import openpyxl
+def new_claims_class(file):
+  df=pd.read_excel(file,engine='openpyxl', encoding='ISO-8859-1')
   if os.path.isfile("classified_ID.pickle"):
     with open('classified_ID.pickle', 'rb') as f:
         ID_classified = pickle.load(f)
