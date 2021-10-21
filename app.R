@@ -43,7 +43,7 @@ ui <- dashboardPage(skin='green',
     color:black; width: 400PX;}
       ")),
     column(fileInput("my_file",
-            "Importer un fichier Excel des données"),
+            "Importer un fichier Excel de données"),
           br(),
           actionButton("classifier",
             strong("Classifier les sinistres"),
