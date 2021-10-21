@@ -21,4 +21,4 @@ def table_finale(df,df_verifier,df_grele):
         if df.loc[k,'ID_ADS']==df_verifier.loc[j, 'ID_ADS']:
           df.loc[k, 'Class']='non grele'
 
-  return(df)
+  return(df.loc[:, (df.columns != 'LI_DSC_ADS_1')&(df.columns != 'LI_DSC_ADS_2')&(df.columns != 'LI_DSC_SIGMA_1')&(df.columns != 'LI_DSC_SIGMA_2')&(df.columns != 'LI_CAUSE_1')])
