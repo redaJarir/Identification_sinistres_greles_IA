@@ -100,8 +100,6 @@ server <- function(input, output, session) {
         sinistres_greles
     })
     
-    
-    
     output$Telecharger<-downloadHandler(filename=function(){'classes_sinistres.xlsx'},
                           content=function(file){
                           if(length(input$Table_sinistres_a_verifier_rows_selected) > 0){
