@@ -62,14 +62,12 @@ ui <- dashboardPage(skin='green',
             border-color: black;border-width: 2px; width:200px"),
                     width = 4),
                        
-    column(dataTableOutput("Table_sinistres_a_verifier"), width=8)
+      column(dataTableOutput("Table_sinistres_a_verifier"), width=8)
               
       
               ))
                 
                    
-                 
-                 
 server <- function(input, output, session) {
   
     my_file<-reactive(input$my_file)
