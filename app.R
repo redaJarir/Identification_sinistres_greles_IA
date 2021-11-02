@@ -13,7 +13,6 @@ source_python("Recherche_V_function.py")
 source_python("initial_classification_function.py")
 source_python("final_classification_function.py")
 source_python("classes_new_claims_function.py")
-source_python("replace_weird_words.py")
 ui <- dashboardPage(skin='green',
   dashboardHeader(
     title = "Identification des sinistres grêles",
