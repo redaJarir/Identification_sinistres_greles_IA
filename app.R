@@ -2,8 +2,8 @@ library(shiny)
 library(reticulate)
 library(reactable)
 library(fresh)
-library(shinydashboard)
 library(DT)
+library(bslib)
 source_python("clean_function.py")
 source_python("stem_function.py")
 source_python("data_preparation_for_lstm_function.py")
@@ -12,103 +12,171 @@ source_python("Recherche_V_function.py")
 source_python("initial_classification_function.py")
 source_python("final_classification_function.py")
 source_python("classes_new_claims_function.py")
-ui <- dashboardPage(skin='green',
-                    dashboardHeader(
-                      title = "Identification des sinistres grêles",
-                      titleWidth = 400, 
-                      tags$li(
-                        a(
-                          href = 'http://www.groupama.fr',
-                          img(
-                            src = 'groupama.jpg',
-                            title = "Groupama", 
-                            height = "30px"
-                          ),
-                          style = "padding-top:10px; padding-bottom:10px;"
-                        ),
-                        class = "dropdown"
-                      )
-                    ),
-                    dashboardSidebar(),
-                    dashboardBody(
-                      tags$head(
-                        tags$style(
-                          HTML('
-            .main-header .logo {
-            font-family: "Georgia", Times, "Times New Roman", serif;
-            font-weight: bold;
-            font-size: 20px;}'
-                          )
-                        )
-                      ),
-                      tags$head(
-                        tags$style(
-                          HTML("
-            .main-sidebar {background-color:  #1E8449 !important;}"
-                          )
-                        )
-                      ),
-                      br(),
-                      tags$head(
-                        tags$style(
-                          HTML(
-                            ".shiny-output-error-validation {color: red;}"
-                          )
-                        )
-                      ),
-                      tags$style(".shiny-file-input-progress {display: none}"),
-                      tags$style(
-                        HTML(
-                          ".tabbable > .nav > li > a {background-color: #7DCEA0;color:black; width: 400PX;}"
-                        )
-                      ),
-                      column(
-                        fileInput("my_file","Importer un fichier Excel de données"),
-                        br(),
-                        actionButton(
-                          "classifier",
-                          strong("Classifier les sinistres"),
-                          style="color: #fff; 
-              background-color: green; 
-              border-color: black;
-              border-width: 2px; 
-              width:200px"
-                        ),
-                        br(),
-                        br(),
-                        actionButton(
-                          "classifier_grele",
-                          strong("Classifier grêle"),
-                          style="color: #fff; 
-              background-color: green; 
-              border-color: black;
-              border-width: 2px; 
-              width:200px"
-                        ),
-                        br(),
-                        br(),
-                        downloadButton(
-                          "Telecharger",
-                          strong("Télécharger les résultats"),
-                          style="color: #fff; 
-              background-color: green; 
-              border-color: black;
-              border-width: 2px; 
-              width:200px"
-                        ),
-                        width = 4
-                      ),
-                      
-                      column(
-                        dataTableOutput("Table_sinistres_a_verifier"), 
-                        width=8
-                      )
-                      
-                    )
+
+ui<-tagList(
+  tags$head(
+    
+    #tags$link(rel = "stylesheet", type = "text/css", href = "bootstrap.css"),
+    
+    tags$style("
+         body, html {
+            height: 100%;
+            scroll-behavior: smooth;
+
+         }
+        
+        .jumbotron {
+            position: relative;
+            top: 50px;
+            background-color:transparent; 
+            color:#ecf0f1;
+            height:100%
+        }
+        .button_align {
+          width: 100%;
+          height: 100%;
+          padding-left: 0px;
+          padding-right: 0px;
+          
+        
+        
+        }
+        .parallax_1 {
+            /* The image used */
+            background-image: url('grele.jpg');
+            
+            /* Set a specific height */
+            height: 100%;
+            margin-left:-15px;   
+            margin-right:-15px;
+            /* Create the parallax scrolling effect */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .parallax_2 {
+            /* The image used */
+            background-image: url('grele.jpg');
+            
+            /* Set a specific height */
+            height: 700px;
+            margin-left:-15px;   
+            margin-right:-15px;
+            /* Create the parallax scrolling effect */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }           
+
+      
+        
+     ")
+    
+    
+  ),
+  
+  
+  navbarPage(
+    theme = bs_theme(
+      secondary = "rgb(0, 106, 83)"
+    ),
+    
+    
+    id="main_navbar",
+    position="fixed-top",
+    title = div(
+      tags$a( 
+        img(
+          src='groupama.jpg',
+          style="margin-left: -15px;", 
+          height = 60
+        ), 
+        href='http://www.groupama.fr',
+        target="_blank"
+      )
+    ),
+    windowTitle="Identification des sinistres grêles",
+    collapsible = TRUE,
+    tabPanelBody(
+      value = "page_1",
+      fluidRow(
+        column(
+          width = 12,
+            div(
+              class="parallax_1 ",
+              div(
+                class="jumbotron",
+                h1(class = "page-header",
+                   style="color: white",
+                  "Identification automatique des sinistres du risque grêle") %>% 
+                  tags$b(),
+                br(),
+                column(
+                  width = 4,
+                  style= "padding-left: 0",
+                  fileInput(
+                    width = "100%",
+                    "my_file", 
+                    p("Importer un fichier Excel de données") %>% tags$b()
+                  )
+                )
+              )
+            )
+          ),
+        fluidRow(
+      
+          style= "height: 100%; padding-right: 30px",
+      
+          column(
+        
+            width = 4,
+            style = "padding: 20px",
+              actionButton(
+              "classifier",
+              class = "button_align",
+              "1 - Classification auto",
+              width = "100%"
+            )
+          ),
+
+          column(
+            width = 4,
+            style = "padding: 20px",
+            actionButton(
+              "classifier_grele",
+              class = "button_align",
+              "2 - Confirmer la vérification"
+            )
+          ),
+
+          column(
+            width = 4,
+            style = "padding: 20px",
+            actionButton(
+              "Telecharger",
+              class = "button_align",
+              "Télécharger les résultats"
+            )
+          )
+        ) %>% column(width = 12, style= "margin-left:12px"),
+        column(
+          width=12,
+          div(
+            class="parallax_2 ",
+            dataTableOutput("Table_sinistres_a_verifier")
+          )
+        )
+      )
+    )
+  )
 )
 
 
+
 server <- function(input, output, session) {
+
   
   my_file<-reactive(input$my_file)
   

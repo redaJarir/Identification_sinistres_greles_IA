@@ -1,5 +1,5 @@
 #libraries
-import pickle5 as pickle
+import pickle
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
