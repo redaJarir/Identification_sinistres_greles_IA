@@ -28,6 +28,7 @@ ui<-tagList(
         .jumbotron {
             position: relative;
             top: 50px;
+            margin-bottom: 0px;
             background-color:transparent; 
             color:#ecf0f1;
             height:100%
@@ -60,7 +61,7 @@ ui<-tagList(
             background-image: url('grele.jpg');
             
             /* Set a specific height */
-            height: 700px;
+            height: 100%;
             margin-left:-15px;   
             margin-right:-15px;
             /* Create the parallax scrolling effect */
@@ -101,46 +102,47 @@ ui<-tagList(
     collapsible = TRUE,
     tabPanelBody(
       value = "page_1",
+      
       fluidRow(
         column(
           width = 12,
+          div(
+            class="parallax_1 ",
             div(
-              class="parallax_1 ",
-              div(
-                class="jumbotron",
-                h1(class = "page-header",
-                   style="color: white",
-                  "Identification automatique des sinistres du risque grêle") %>% 
-                  tags$b(),
-                br(),
-                column(
-                  width = 4,
-                  style= "padding-left: 0",
-                  fileInput(
-                    width = "100%",
-                    "my_file", 
-                    p("Importer un fichier Excel de données") %>% tags$b()
-                  )
+              class="jumbotron",
+              h1(class = "page-header",
+                 style="color: white",
+                 "Identification automatique des sinistres du risque grêle") %>% 
+                tags$b(),
+              br(),
+              column(
+                width = 4,
+                style= "padding-left: 0",
+                fileInput(
+                  width = "100%",
+                  "my_file", 
+                  p("Importer un fichier Excel de données") %>% tags$b()
                 )
               )
             )
-          ),
+          )
+        ),
         fluidRow(
-      
+          
           style= "height: 100%; padding-right: 30px",
-      
+          class="parallax_2 ",
           column(
-        
+            
             width = 4,
             style = "padding: 20px",
-              actionButton(
+            actionButton(
               "classifier",
               class = "button_align",
               "1 - Classification auto",
               width = "100%"
             )
           ),
-
+          
           column(
             width = 4,
             style = "padding: 20px",
@@ -150,7 +152,7 @@ ui<-tagList(
               "2 - Confirmer la vérification"
             )
           ),
-
+          
           column(
             width = 4,
             style = "padding: 20px",
@@ -160,18 +162,43 @@ ui<-tagList(
               "Télécharger les résultats"
             )
           )
-        ) %>% column(width = 12, style= "margin-left:12px"),
+        ) %>% column(width = 12),
+        column(
+          width = 12,
+          style = "padding: 20px",
+          tags$ol(
+            tags$li(
+              class="text-center", 
+              "Outbreak analysis and projection of a worldwide epidemic"
+            ),
+            tags$li(
+              class="text-center", 
+              "Outbreak analysis and projection of a worldwide epidemic"
+            )
+            
+          )
+          
+        ),
         column(
           width=12,
           div(
             class="parallax_2 ",
-            dataTableOutput("Table_sinistres_a_verifier")
+            div(
+              
+              class = "panel panel-default",
+              style = "background-color: white; 
+                      padding-left: 30px;
+                      padding-ritgh: 30px",
+              dataTableOutput("Table_sinistres_a_verifier")
+            )
           )
         )
       )
-    )
+    ),
+    tags$footer("Done By ASIGMA")
   )
 )
+
 
 
 
