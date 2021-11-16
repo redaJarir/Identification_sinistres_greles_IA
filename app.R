@@ -4,6 +4,9 @@ library(reactable)
 library(fresh)
 library(DT)
 library(bslib)
+library(waiter)
+library(shinyalert)
+library(writexl)
 source_python("clean_function.py")
 source_python("stem_function.py")
 source_python("data_preparation_for_lstm_function.py")
@@ -61,7 +64,7 @@ ui<-tagList(
             background-image: url('grele.jpg');
             
             /* Set a specific height */
-            height: 100%;
+            height: 400px;
             margin-left:-15px;   
             margin-right:-15px;
             /* Create the parallax scrolling effect */
@@ -69,9 +72,7 @@ ui<-tagList(
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-        }           
-
-      
+        }   
         
      ")
     
@@ -81,6 +82,7 @@ ui<-tagList(
   
   navbarPage(
     theme = bs_theme(
+      primary = "#006A53",
       secondary = "rgb(0, 106, 83)"
     ),
     
@@ -94,7 +96,7 @@ ui<-tagList(
           style="margin-left: -15px;", 
           height = 60
         ), 
-        href='http://www.groupama.fr',
+        #href='http://www.groupama.fr',
         target="_blank"
       )
     ),
@@ -102,7 +104,7 @@ ui<-tagList(
     collapsible = TRUE,
     tabPanelBody(
       value = "page_1",
-      
+      useShinyalert(),
       fluidRow(
         column(
           width = 12,
@@ -156,7 +158,7 @@ ui<-tagList(
           column(
             width = 4,
             style = "padding: 20px",
-            actionButton(
+            downloadButton(
               "Telecharger",
               class = "button_align",
               "Télécharger les résultats"
@@ -169,11 +171,11 @@ ui<-tagList(
           tags$ol(
             tags$li(
               class="text-center", 
-              "Outbreak analysis and projection of a worldwide epidemic"
+              "Lancer la classification automatique"
             ),
             tags$li(
               class="text-center", 
-              "Outbreak analysis and projection of a worldwide epidemic"
+              "Vérifier les sinistres identifiés par l'IA puis télécharger le fichier de résultat "
             )
             
           )
@@ -182,20 +184,43 @@ ui<-tagList(
         column(
           width=12,
           div(
-            class="parallax_2 ",
+            class="parallax_1 ",
             div(
               
               class = "panel panel-default",
               style = "background-color: white; 
                       padding-left: 30px;
                       padding-ritgh: 30px",
+              useWaitress(color = "#006A53", percent_color = "white"),
               dataTableOutput("Table_sinistres_a_verifier")
             )
           )
         )
       )
-    ),
-    tags$footer("Done By ASIGMA")
+    )
+  ),
+  div(class="parallax_2 text-center",
+      tags$footer( #class="text-center",
+        style="color:#ecf0f1",
+        
+        column(width=12, style="height:50px"),
+        p(tags$strong("Made with R, Shiny, TensorFlow and Python"),
+           tags$br(),
+           tags$strong("by")
+        ),
+
+        tags$br(),
+        tags$strong("Fatima-Zahra Zeikar"),
+        tags$em(tags$strong("Consultante data scientist")),
+        tags$a(href="https://www.linkedin.com/in/fatima-zahra-zeikar-7a03b9153/", icon("linkedin"),target="_blank"),
+        tags$strong(p(icon("address-card"), " fatima.zahra@gradiant.fr")),
+        tags$br(),
+        tags$strong("Reda JARIR"),
+        tags$em(tags$strong("Consultant manager")),
+        tags$a(href="https://www.linkedin.com/in/reda-jarir-0782502b/", icon("linkedin"),target="_blank"),
+        tags$strong(p(icon("address-card"), " reda.jarir@asigma.fr")),
+        tags$a(href='https://www.gradiant.fr/', tags$img(src='gradiant.png', height='auto', width='80'))
+      )
   )
 )
 
@@ -204,6 +229,11 @@ ui<-tagList(
 
 server <- function(input, output, session) {
 
+  waitress <- Waitress$new("nav", 
+                           theme = "overlay-percent",
+                           
+                          )
+  #new("#Table_sinistres_a_verifier", theme = "line")
   
   my_file<-reactive(input$my_file)
   
@@ -218,20 +248,33 @@ server <- function(input, output, session) {
           "Erreur : Télécharger un fichier .xlsx s'il vous plaît"
         )
       )
+      
+      waitress$start()
+      
+      for(i in 1:10){
+        waitress$inc(10) # increase by 10%
+        Sys.sleep(.3)
+      }
       data_class<-new_claims_class(my_file()$datapath)
+      waitress$close()
       return(data_class)
+      
     }
   )
   
   claims_to_check<-reactive(
     {
+
       classes_claims()[classes_claims()[,'Class']=='sinistre à vérifier',]
+
     }
   )
   
   output$Table_sinistres_a_verifier<-renderDataTable(
     {
+
       claims_to_check()[,c('ID_ADS', 'LI_DSC_SIGMA', 'LI_DSC_ADS', 'LI_CAUSE', 'Class')]
+      
     }, 
     options = list(
       scrollX = TRUE, 
@@ -245,6 +288,7 @@ server <- function(input, output, session) {
     )
   )
   
+  
   claims_to_check_hail<- eventReactive(
     input$classifier_grele,
     {
@@ -254,17 +298,40 @@ server <- function(input, output, session) {
       sinistres_greles
     }
   )
+  observeEvent(input$classifier_grele, {
+    shinyalert("Mise à jour réussie!", 
+                "Vous pouvez télécharger le fichier", 
+                type ="success",
+                animation = TRUE,
+                confirmButtonCol = "#006A53"
+    )
+   }
+  )
+   
+  
+  rv <- reactiveValues(download_flag = 0)
   
   output$Telecharger<-downloadHandler(
-    filename=function(){'classes_sinistres.xlsx'},
+    filename=function(){paste0(Sys.Date(), '_', 'classes_sinistres.xlsx')},
     content=function(file){
       if(length(input$Table_sinistres_a_verifier_rows_selected) > 0){
         sinistres_greles=claims_to_check_hail()
       }else{
         sinistres_greles<-data.frame()
       }
+      path_file<-paste0(choose.dir(),'/', Sys.Date(), '_', 'classes_sinistres.xlsx' )
       table_classes_sinistres<-table_finale(classes_claims(),claims_to_check(),sinistres_greles)
-      write.xlsx(table_classes_sinistres, file, sheetName = "Sinistres classifiés")
+      write_xlsx(table_classes_sinistres, path_file)
+      
+      rv$download_flag <- rv$download_flag + 1
+      if(rv$download_flag > 0){ 
+        shinyalert("Fichier téléchargé!", 
+                   path_file, 
+                   type ="success",
+                   animation = TRUE,
+                   confirmButtonCol = "#006A53"
+        )
+      }
     }
   )
 }
